@@ -6,6 +6,7 @@ Created on Mon Apr 18 2020
 """
 ###Librerias
 import numpy as np
+import random as rn
 
 
 ###Clases
@@ -20,7 +21,11 @@ def generador(rango=(0,0), tamaño=(2,2)):
     "Parametros: generador(rango=(rango minino, rango maximo), tamaño=(filas, columnas))"
     
     #Declaración de variables
-    ran_array = np.random.randint(rango[0],rango[1],tamaño)
+    ran_array = np.zeros(tamaño)
+    
+    for f in range(0,tamaño[0],1):#Generación de valores pseudoaleatorios, Filas
+        for c in range(0,tamaño[1],1):#Columnas
+            ran_array[f,c] = rn.randint(rango[0],rango[1])
     return ran_array
     
 def imprimir(ar_2d, nm_fl=Names_Dictionary(), nm_cl=Names_Dictionary()):
