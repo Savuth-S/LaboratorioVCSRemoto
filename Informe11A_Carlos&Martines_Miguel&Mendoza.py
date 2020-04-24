@@ -32,7 +32,7 @@ def imprimir(ar_2d, nm_fl=Names_Dictionary(), nm_cl=Names_Dictionary()):
     for f in range(0,ar_fil,1): #Impresión legible, Filas con nombre asignado
         print("\n--"+str(nm_fl[f])+"--")
         for c in range(0,ar_col,1): #Columnas con nombre asignado
-            print("    "+str(nm_cl[c])+": "+str(int(ar_2d[f,c]))+"M $COP")
+            print("    "+str(nm_cl[c])+": "+str(ar_2d[f,c])+"M $COP")
             
 def imprimir_personalizado(ar_2d,rango=(0,1), nm_fl=Names_Dictionary(), nm_cl=Names_Dictionary()):
     "Impresion de un rango de valores en un array bidimensional de manera legible con nombres especificos"
@@ -119,7 +119,7 @@ def restador(br_mn,br_st):
     
     #Declaración de variables
     ar_fil, ar_col = np.shape(br_mn)
-    ar_resul = np.zeros((ar_fil,ar_col))
+    ar_resul = np.zeros((ar_fil,ar_col),np.int32)
     
     for f in range(0,ar_fil,1): #Asignación de la resta de arrays ingresados al array de resultado, Filas
         for c in range(0,ar_col,1): #Columnas
@@ -287,19 +287,51 @@ def generador3D(ar_2d,rg = 7, pr = 0.7):
                 ar_3d[p,f,c] = round(ar_2d[f,c]/pow((1+pr),p),2)
     return ar_3d
     
-def imprimir(ar_2d, nm_fl=Names_Dictionary(), nm_cl=Names_Dictionary()):
+def imprimir3D(ar_3d, nm_pr=Names_Dictionary(), nm_fl=Names_Dictionary(), nm_cl=Names_Dictionary()):
+    "Impresion de un array tridimensional de manera legible con nombres especificos"
+    
+    #Declaración de variables
+    ar_tam = np.shape(ar_3d)
+    
+    for p in range(0,ar_tam[0],1):
+        print("\n--"+str(nm_pr[p])+"--", end="")
+        for f in range(0,ar_tam[1],1): #Impresión legible, Filas con nombre asignado
+            print("\n="+str(nm_fl[f])+"=")
+            for c in range(0,ar_tam[2],1): #Columnas con nombre asignado
+                print("    "+str(nm_cl[c])+": "+str(ar_3d[p,f,c])+"M $COP")
+
+def calcular_ganancias3D(tr_mn,tr_st):
+    "Resta dos arrays tridimensionales del mismo tamaño en la forma minuendo-sustraendo"
+    
+    #Check
+    if np.shape(tr_mn) != np.shape(tr_st): #Simetria
+        print("\n\nERROR: Los arrays son de tamaños diferentes\n\n")
+        return np.zeros((2,2,2))
+    
+    #Declaración de variables
+    ar_tam = np.shape(tr_mn)
+    ar_resul = np.zeros((ar_tam[0],ar_tam[1],ar_tam[2]),np.int32)
+    
+    for p in range(0,ar_tam[0],1): #Asignación de la resta de arrays ingresados al array de resultado, Profundidad
+        for f in range(0,ar_tam[1],1): #Filas
+            for c in range(0,ar_tam[2],1): #Columnas
+                ar_resul[p,f,c] = int(tr_mn[p,f,c]-tr_st[p,f,c])            
+    return ar_resul
     
     
 ###Programa Principal
 #Declaración de variables
 meses = Names_Dictionary({0: "Enero", 1: "Febrero", 2: "Marzo", 3: "Abril", 4: "Mayo", 5: "Junio", 6: "Julio", 7: "Agosto", 8: "Septiembre", 9: "Octubre", 10: "Noviembre", 11: "Diciembre"})
 sucursales = Names_Dictionary({0: "Buracamanga", 1: "Floridablanca", 2: "Girón", 3: "Piedecuesta"})
-sucursales = Names_Dictionary({0: "2019", 1: "2018", 2: "2017", 3: "2016", 4: "2015"})
+años = Names_Dictionary({0: "2019", 1: "2018", 2: "2017", 3: "2016", 4: "2015"})
+
 ingresos =  generador((100,180),(4,12))
 egresos = generador((60,130),(4,12))
 ganancias = restador(ingresos,egresos)
+
 ingresos3D = generador3D(ingresos,4,0.095)
 egresos3D = generador3D(egresos,4,0.056)
+ganancias3D = calcular_ganancias3D(ingresos3D,egresos3D)
 
 
 print("~~~~Ingresos por sucursal en meses~~~~",end = "")
@@ -311,15 +343,29 @@ imprimir(egresos, sucursales, meses)
 print("\n\n~~~~Ganancias por sucursal en meses~~~~",end = "")
 imprimir(ganancias, sucursales, meses)
 
-print(sucursales[mejor_Ciudad(ganancias, -1, True)])
-print(sucursales[peor_Ciudad(ganancias, -1, True)])
+print("\nCiudad con mayor ganancias: "+ str(sucursales[mejor_Ciudad(ganancias, -1, True)]))
+print("Ciudad con menor ganancias: "+ str(sucursales[peor_Ciudad(ganancias, -1, True)]))
+
+print("\n\n~~~~Mes de mayor ganancia por sucursal~~~",end = "")
 mejor_Mes(ganancias, -1, True, sucursales, meses)
+
+print("\n\n~~~~Mes de menor ganancia por sucursal~~~~",end = "")
 peor_Mes(ganancias, -1, True, sucursales, meses)
 
 print("\n\n~~~~Promedio anual de cada sucursal~~~~",end = "")
 promedio(ingresos, egresos, ganancias, sucursales)
 
-print("\n\n~~~~2~~~~",end = "")
+print("\n\n~~~~Promedio 2~~~~",end = "")
 promedio_2(ingresos, egresos, ganancias, sucursales)
 
+print("\n\n~~~~Distribución porcentual de ganancias y perdidas~~~~",end = "")
 extraer_proporciones(ganancias,sucursales)
+
+print("\n\n~~~~Ingresos por sucursal en meses de 2019-2015~~~~",end = "")
+imprimir3D(ingresos3D,años, sucursales, meses)
+
+print("\n\n~~~~Egresos por sucursal en meses de 2019-2015~~~~",end = "")
+imprimir3D(egresos3D,años, sucursales, meses)
+
+print("\n\n~~~~Ganancias por sucursal en meses de 2019-2015~~~~",end = "")
+imprimir3D(ganancias3D,años, sucursales, meses)
