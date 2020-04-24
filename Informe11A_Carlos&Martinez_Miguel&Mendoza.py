@@ -344,7 +344,7 @@ imprimir(ingresos, sucursales, meses)
 
 print("\n\n~~~~Egresos por sucursal en meses~~~~",end = "")
 imprimir(egresos, sucursales, meses)
-"""
+
 print("\n\n~~~~Ganancias por sucursal en meses~~~~",end = "")
 imprimir(ganancias, sucursales, meses)
 
