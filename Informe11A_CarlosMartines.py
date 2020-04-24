@@ -6,16 +6,13 @@ Created on Mon Apr 18 2020
 """
 ###Librerias
 import numpy as np
-import random as rn
+
 
 ###Clases
-class suc_Dict(dict):
+class Names_Dictionary(dict):
     def __missing__(self, key):
         return "Indefenido"
 
-class mes_Dict(dict):
-    def __missing__(self, key):
-        return "Indefinido"
 
 ###Funciones
 def generador(rango=(0,0), tamaño=(2,2)): 
@@ -23,32 +20,102 @@ def generador(rango=(0,0), tamaño=(2,2)):
     "Parametros: generador(rango=(rango minino, rango maximo), tamaño=(filas, columnas))"
     
     #Declaración de variables
-    ran_array = np.zeros(tamaño)
-    
-    for f in range(0,tamaño[0],1): #Asignación de valores pseudoaleatorios al array, Filas
-        for c in range(0,tamaño[1],1): #Columnas
-            ran_array[f,c] = int(rn.uniform(rango[0], rango[1]))
+    ran_array = np.random.randint(rango[0],rango[1],tamaño)
     return ran_array
     
-def imprimir(ar_2d):
-    "Impresion de un array bidimensional 4x12 de manera legible con nombres especificos"
+def imprimir(ar_2d, nm_fl=Names_Dictionary(), nm_cl=Names_Dictionary()):
+    "Impresion de un array bidimensional de manera legible con nombres especificos"
     
     #Declaración de variables
     ar_fil, ar_col = np.shape(ar_2d)
-    nm_fil = suc_Dict({0: "Buracamanga", 1: "Floridablanca", 2: "Girón", 3: "Piedecuesta"})
-    nm_col = mes_Dict({0: "Enero", 1: "Febrero", 2: "Marzo", 3: "Abril", 4: "Mayo", 5: "Junio", 6: "Julio", 7: "Agosto", 8: "Septiembre", 9: "Octubre", 10: "Noviembre", 11: "Diciembre"})
     
     for f in range(0,ar_fil,1): #Impresión legible, Filas con nombre asignado
-        print("\n--"+str(nm_fil[f])+"--")
+        print("\n--"+str(nm_fl[f])+"--")
         for c in range(0,ar_col,1): #Columnas con nombre asignado
-            print("    "+str(nm_col[c])+": "+str(int(ar_2d[f,c]))+"M $COP")
+            print("    "+str(nm_cl[c])+": "+str(int(ar_2d[f,c]))+"M $COP")
+            
+def imprimir_personalizado(ar_2d,rango=(0,1), nm_fl=Names_Dictionary(), nm_cl=Names_Dictionary()):
+    "Impresion de un rango de valores en un array bidimensional de manera legible con nombres especificos"
     
+    #Checks
+    ar_tam = np.shape(ar_2d, nm_fl=Names_Dictionary(), nm_cl=Names_Dictionary())
+    if rango[0] < 0 or rango[1] > ar_tam[1]: #Tamaño de rango
+        print("\n\nERROR: El rango es demasiado grande\n\n")
+        return
+    
+    for f in range(0,ar_tam[0],1): #Impresión legible, Filas con nombre asignado
+        print("\n--"+str(nm_fl[f])+"--")
+        for c in range(rango[0]-1,rango[1]+1,1): #Columnas con nombre asignado
+            print("    "+str(nm_cl[c])+": "+str(int(ar_2d[f,c]))+"M $COP")
+            
+def promedio(br_ng, br_gr, br_gn, nm_fl=Names_Dictionary()): 
+    "Calcula el promedio de una fila de valores en tres array bidimensional"
+    
+    
+    #Checks
+    ar_tam = np.shape(br_ng)
+    if(ar_tam[0] != np.shape(br_gr)[0] or ar_tam[0] != np.shape(br_gn)[0]):
+        print("\n\nERROR: Los arrays son de tamaños diferentes\n\n")
+        return
+    
+    
+    for f in range(0,ar_tam[0],1):
+        print("\n--"+str(nm_fl[f])+"--")
+        
+        sum = 0
+        for c in range(0,ar_tam[1],1):
+            sum += br_ng[f,c]
+        print("Ingresos: "+ str(round(sum/ar_tam[1],2))+"M $COP")
+        
+        sum = 0
+        for c in range(0,np.shape(br_gr)[1],1):
+            sum += br_gr[f,c]
+        print("Egresos: "+ str(round(sum/np.shape(br_gr)[1],2))+"M $COP")
+        
+        sum = 0
+        for c in range(0,np.shape(br_gn)[1],1):
+            sum += br_gn[f,c]
+        print("Ganancias: "+ str(round(sum/np.shape(br_gn)[1],2))+"M $COP")
+     
+def promedio_2(br_ng, br_gr, br_gn, nm_fl=Names_Dictionary()): 
+    "Calcula el promedio de una fila de valores en tres array bidimensional"
+    
+    #Checks
+    ar_tam = np.shape(br_ng)
+    if(ar_tam[0] != np.shape(br_gr)[0] or ar_tam[0] != np.shape(br_gn)[0]): #Simetria
+        print("\n\nERROR: Los arrays son de tamaños diferentes\n\n")
+        return
+    
+    #Ordanmiento de variables
+    np.sort(br_ng)
+    np.sort(br_gr)
+    np.sort(br_gn)
+    
+    for f in range(0,ar_tam[0],1):
+        print("\n--"+str(nm_fl[f])+"--")
+        
+        sum = 0
+        for c in range(1,ar_tam[1]-1,1):
+            sum += br_ng[f,c]
+        print("Ingresos: "+ str(round(sum/ar_tam[1],2))+"M $COP")
+        
+        sum = 0
+        for c in range(1,np.shape(br_gr)[1]-1,1):
+            sum += br_gr[f,c]
+        print("Egresos: "+ str(round(sum/np.shape(br_gr)[1],2))+"M $COP")
+        
+        sum = 0
+        for c in range(1,np.shape(br_gn)[1]-1,1):
+            sum += br_gn[f,c]
+        print("Ganancias: "+ str(round(sum/np.shape(br_gn)[1]-2,2))+"M $COP")     
+     
 def restador(br_mn,br_st): 
     "Resta dos arrays bidimensionales del mismo tamaño en la forma minuendo-sustraendo"
     
     #Check
     if np.shape(br_mn) != np.shape(br_st): #Simetria
-        return 
+        print("\n\nERROR: Los arrays son de tamaños diferentes\n\n")
+        return np.zeros((2,2))
     
     #Declaración de variables
     ar_fil, ar_col = np.shape(br_mn)
@@ -59,8 +126,88 @@ def restador(br_mn,br_st):
             ar_resul[f,c] = int(br_mn[f,c]-br_st[f,c])            
     return ar_resul
     
-def mejor_Ciudad(ar_2d, cl = -1, prnt = False): 
-    "Encuentra la fila de mayor valor en un array bidimensional y devuelve un nombre especifico"
+def extraer_proporciones(ar_2d, nm_fl=Names_Dictionary()):
+    "Ecuentra el porcentaje total de valores negativos y positivos en un array bidimensional por fila" 
+    
+    #Declaración de variables
+    ar_tam = np.shape(ar_2d)
+    
+    for f in range(0,ar_tam[0],1):
+        print("\n--"+str(nm_fl[f])+"--")
+        
+        neg = 0
+        pos = 0
+        for c in range(0,ar_tam[1],1):
+            if ar_2d[f,c] < 0:
+                neg += 1
+            elif ar_2d[f,c] > 0:
+                pos += 1
+        
+        print("Ganancias: "+ str(round((pos*100/ar_tam[1]),2))+"%")
+        print("Perdidas: "+ str(round((neg*100)/ar_tam[1],2))+"%")
+             
+def mejor_Mes(ar_2d, fl = -1, ps = False, nm_fl=Names_Dictionary(), nm_cl=Names_Dictionary()):
+    "Encuentra la columna de mayor valor en un array bidimensional y devuelve un nombre especifico"
+    
+    #Declaración de variables
+    ar_fil, ar_col = ar_2d.shape
+    sl_col = 0
+    sl_max = 0
+    
+    if fl > -1 and ar_fil-1 >= fl: #Bloque para la selección de fila por el usuario
+        for c in range(0,ar_col,1): #Comparación de valores en una fila
+            if sl_max < ar_2d[fl,c]:
+                sl_max = ar_2d[fl,c]
+                sl_col = c
+                
+        if ps == True:
+            return sl_col
+        return sl_max
+    elif fl > -1:
+        print("ERROR: Tamaño de fila invalido")
+        return
+    
+    for f in range(0,ar_fil,1):
+        for c in range(0,ar_col,1): #Comparación de valores en una fila
+            if sl_max < ar_2d[f,c]:
+                sl_max = ar_2d[f,c]
+                sl_col = c
+                
+        if ps == True:
+            print(str(nm_fl[f])+": "+ str(nm_cl[sl_col]))
+            
+def peor_Mes(ar_2d, fl = -1, ps = False, nm_fl=Names_Dictionary(), nm_cl=Names_Dictionary()):
+    "Encuentra la columna de menor valor en un array bidimensional y devuelve un nombre especifico"
+    
+    #Declaración de variables
+    ar_fil, ar_col = ar_2d.shape
+    sl_col = 0
+    sl_max = 0
+    
+    if fl > -1 and ar_fil-1 >= fl: #Bloque para la selección de fila por el usuario
+        for c in range(0,ar_col,1): #Comparación de valores en una fila
+            if sl_max > ar_2d[fl,c]:
+                sl_max = ar_2d[fl,c]
+                sl_col = c
+                
+        if ps == True:
+            return sl_col
+        return sl_max
+    elif fl > -1:
+        print("ERROR: Tamaño de fila invalido")
+        return
+    
+    for f in range(0,ar_fil,1):
+        for c in range(0,ar_col,1): #Comparación de valores en una fila
+            if sl_max > ar_2d[f,c]:
+                sl_max = ar_2d[f,c]
+                sl_col = c
+                
+        if ps == True:
+            print(str(nm_fl[f])+": "+ str(nm_cl[sl_col]))
+            
+def mejor_Ciudad(ar_2d, cl = -1, ps = False): 
+    "Encuentra la fila de mayor valor en un array bidimensional y devuelve de manera opcional una posición para un nombre especifico"
     
     #Declaración de variables
     ar_fil, ar_col = ar_2d.shape
@@ -72,9 +219,8 @@ def mejor_Ciudad(ar_2d, cl = -1, prnt = False):
             if sl_max < ar_2d[f,cl]:
                 sl_max = ar_2d[f,cl]
                 pos = f
-        if prnt == True:
-            nm_fil = suc_Dict({0: "Buracamanga", 1: "Floridablanca", 2: "Girón", 3: "Piedecuesta"})
-            print(nm_fil[pos])
+        if ps == True:
+            return pos
         return sl_max
     elif cl > -1:
         print("ERROR: Tamaño de columnas invalido")
@@ -90,13 +236,12 @@ def mejor_Ciudad(ar_2d, cl = -1, prnt = False):
             sl_max = sum
             pos = f
             
-    if prnt == True:
-        nm_fil = suc_Dict({0: "Buracamanga", 1: "Floridablanca", 2: "Girón", 3: "Piedecuesta"})
-        print(nm_fil[pos])
+    if ps == True:
+        return pos
     return sl_max
     
-def peor_Ciudad(ar_2d, cl = -1, prnt = False): 
-    "Encuentra la fila de menor valor en un array bidimensional y devuelve un nombre especifico"
+def peor_Ciudad(ar_2d, cl = -1, ps = False): 
+    "Encuentra la fila de menor valor en un array bidimensional y devuelve de manera opcional una posición para un nombre especifico"
     
     #Declaración de variables
     ar_fil, ar_col = ar_2d.shape
@@ -108,9 +253,8 @@ def peor_Ciudad(ar_2d, cl = -1, prnt = False):
             if sl_min > ar_2d[f,cl]:
                 sl_min = ar_2d[f,cl]
                 pos = f
-        if prnt == True:
-            nm_fil = suc_Dict({0: "Buracamanga", 1: "Floridablanca", 2: "Girón", 3: "Piedecuesta"})
-            print(nm_fil[pos])
+        if ps == True:
+            return pos
         return sl_min
     elif cl > -1:
         print("ERROR: Tamaño de columnas invalido")
@@ -126,60 +270,56 @@ def peor_Ciudad(ar_2d, cl = -1, prnt = False):
             sl_min = sum
             pos = f
             
-    if prnt == True:
-        nm_fil = suc_Dict({0: "Buracamanga", 1: "Floridablanca", 2: "Girón", 3: "Piedecuesta"})
-        print(nm_fil[pos])
+    if ps == True:
+        return pos
     return sl_min
     
-def mejor_Mes(ar_2d, fl = -1, prnt = False):
-    "Encuentra la columna de mayor valor en un array bidimensional y devuelve un nombre especifico"
+def generador3D(ar_2d,rg = 7, pr = 0.7):
+    "Crea un array tridimensional lleno de numeros enteros pseudoaleatorios de un array bidimensional y una proyeccion de crecimiento anual pasadas ingresado."
     
     #Declaración de variables
-    ar_fil, ar_col = ar_2d.shape
-    sl_col = 0
-    sl_max = 0
+    tamaño = np.shape(ar_2d)
+    ar_3d = np.zeros((rg +1,tamaño[0],tamaño[1]))
     
-    if fl > -1 and ar_fil-1 >= fl: #Bloque para la selección de fila por el usuario
-        for c in range(0,ar_col,1): #Comparación de valores en una fila
-            if sl_max < ar_2d[fl,c]:
-                sl_max = ar_2d[fl,c]
-                sl_col = c
-                
-        if prnt == True:
-            nm_col = mes_Dict({0: "Enero", 1: "Febrero", 2: "Marzo", 3: "Abril", 4: "Mayo", 5: "Junio", 6: "Julio", 7: "Agosto", 8: "Septiembre", 9: "Octubre", 10: "Noviembre", 11: "Diciembre"})
-            print(nm_col[sl_col])
-        return sl_max
-    elif fl > -1:
-        print("ERROR: Tamaño de fila invalido")
-        return
+    for p in range(0,rg+1,1):
+        for f in range(0,tamaño[0],1):
+            for c in range(0,tamaño[1],1):
+                ar_3d[p,f,c] = round(ar_2d[f,c]/pow((1+pr),p),2)
+    return ar_3d
     
-    for f in range(0,ar_fil,1):
-        for c in range(0,ar_col,1): #Comparación de valores en una fila
-            if sl_max < ar_2d[f,c]:
-                sl_max = ar_2d[f,c]
-                sl_col = c
-                
-        if prnt == True:
-            nm_fil = suc_Dict({0: "Buracamanga", 1: "Floridablanca", 2: "Girón", 3: "Piedecuesta"})
-            nm_col = mes_Dict({0: "Enero", 1: "Febrero", 2: "Marzo", 3: "Abril", 4: "Mayo", 5: "Junio", 6: "Julio", 7: "Agosto", 8: "Septiembre", 9: "Octubre", 10: "Noviembre", 11: "Diciembre"})
-            print(nm_fil[f], nm_col[sl_col])
-
+def imprimir(ar_2d, nm_fl=Names_Dictionary(), nm_cl=Names_Dictionary()):
+    
+    
 ###Programa Principal
 #Declaración de variables
+meses = Names_Dictionary({0: "Enero", 1: "Febrero", 2: "Marzo", 3: "Abril", 4: "Mayo", 5: "Junio", 6: "Julio", 7: "Agosto", 8: "Septiembre", 9: "Octubre", 10: "Noviembre", 11: "Diciembre"})
+sucursales = Names_Dictionary({0: "Buracamanga", 1: "Floridablanca", 2: "Girón", 3: "Piedecuesta"})
+sucursales = Names_Dictionary({0: "2019", 1: "2018", 2: "2017", 3: "2016", 4: "2015"})
 ingresos =  generador((100,180),(4,12))
 egresos = generador((60,130),(4,12))
 ganancias = restador(ingresos,egresos)
+ingresos3D = generador3D(ingresos,4,0.095)
+egresos3D = generador3D(egresos,4,0.056)
+
 
 print("~~~~Ingresos por sucursal en meses~~~~",end = "")
-imprimir(ingresos)
+imprimir(ingresos, sucursales, meses)
 
 print("\n\n~~~~Egresos por sucursal en meses~~~~",end = "")
-imprimir(egresos)
+imprimir(egresos, sucursales, meses)
 
-if ingresos.shape == egresos.shape:
-    print("\n\n~~~~Ganancias y/o perdidas por sucursal en meses~~~~",end = "")
-    imprimir(ganancias)
+print("\n\n~~~~Ganancias por sucursal en meses~~~~",end = "")
+imprimir(ganancias, sucursales, meses)
 
-    print(mejor_Ciudad(ganancias, -1, True))
-    print(peor_Ciudad(ganancias, -1, True))
-    print(mejor_Mes(ganancias, -1, True))
+print(sucursales[mejor_Ciudad(ganancias, -1, True)])
+print(sucursales[peor_Ciudad(ganancias, -1, True)])
+mejor_Mes(ganancias, -1, True, sucursales, meses)
+peor_Mes(ganancias, -1, True, sucursales, meses)
+
+print("\n\n~~~~Promedio anual de cada sucursal~~~~",end = "")
+promedio(ingresos, egresos, ganancias, sucursales)
+
+print("\n\n~~~~2~~~~",end = "")
+promedio_2(ingresos, egresos, ganancias, sucursales)
+
+extraer_proporciones(ganancias,sucursales)
