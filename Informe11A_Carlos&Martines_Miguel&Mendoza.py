@@ -344,7 +344,7 @@ imprimir(ingresos, sucursales, meses)
 
 print("\n\n~~~~Egresos por sucursal en meses~~~~",end = "")
 imprimir(egresos, sucursales, meses)
-
+"""
 print("\n\n~~~~Ganancias por sucursal en meses~~~~",end = "")
 imprimir(ganancias, sucursales, meses)
 
@@ -373,4 +373,4 @@ print("\n\n~~~~Egresos por sucursal en meses de 2019-2015~~~~",end = "")
 imprimir3D(egresos3D,años, sucursales, meses)
 
 print("\n\n~~~~Ganancias por sucursal en meses de 2019-2015~~~~",end = "")
-imprimir3D(ganancias3D,años, sucursales, meses)
+imprimir3D(ganancias3D,años, sucursales, meses)"""
